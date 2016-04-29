@@ -9,12 +9,13 @@ Please use in caution as the app will delete all files without asking for it.
 
 # Usage
 
-- compile the code
-- chmod + x massDelete
+#### Download the code:
+>git clone https://github.com/VeriTeknik/massDelete.git
 
-## delete files in /var/lib/session
-
-./massDelete -d /var/lib/session -v
+#### compile
+>make
+#### to delete files in /var/lib/session
+>./massDelete -d /var/lib/session -v
 
 #Changelog
 
