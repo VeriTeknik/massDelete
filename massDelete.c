@@ -28,6 +28,7 @@ void CTRLC(int deleted) {
     exit(1);
 }
 
+
 int main (int argc, char **argv)
 {
 	signal(SIGINT, CTRLC);
@@ -41,7 +42,7 @@ int main (int argc, char **argv)
 	DIR *dir;
 	struct dirent *dp;
 	static char usage[] = "usage: ./massDelete -d <DIRECTORY> -v -s 2000 \n\t-d <path to folder to delete files inside with trailing slash.\n\t-v verbose.\n\t-s sleep between each delete in microseconds\n\nExample: ./massDelete -d /var/lib/session -v -s 2000\n";
-	while ((options = getopt(argc, argv, "d:v::s::")) != -1)
+	while ((options = getopt(argc, argv, "d:v::s:")) != -1)
 	switch(options)
 	{
 		case 'd':
@@ -76,7 +77,7 @@ int main (int argc, char **argv)
 	
 	printf("Directory= \"%s\"\n", directory);
 	verbose==1?printf("Verbosity enabled\n\n"):printf("Verbosity disabled\n\n");
-	if(sleep==1)printf("Sleep duration %d microseconds\n",sleepduration);
+	if(sleep==1)printf("Sleep duration %u microseconds\n",sleepduration);
 
 	if ((dir = opendir (directory)) == NULL) 
 	{
