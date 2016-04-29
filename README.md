@@ -22,7 +22,7 @@ Please use in caution as the app will delete all files without asking for it.
 >./massDelete -d /var/lib/session -v
 
 #### to delete files in /tmp with 2500 microseconds sleep between each deletion
->./massDelete -d /var/lib/session -v -s 2500
+>./massDelete -d /tmp -v -s 2500
 
 #Changelog
 Version 0.3

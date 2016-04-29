@@ -15,6 +15,7 @@ USE AT YOUR OWN RISK
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <signal.h>
@@ -71,6 +72,8 @@ int main (int argc, char **argv)
 		exit(1);
 	}
 	
+	char p = directory[strlen(directory)-1];
+	
 	printf("Directory= \"%s\"\n", directory);
 	verbose==1?printf("Verbosity enabled\n\n"):printf("Verbosity disabled\n\n");
 	if(sleep==1)printf("Sleep duration %d microseconds\n",sleepduration);
@@ -87,7 +90,7 @@ int main (int argc, char **argv)
   	if(dp->d_name[0] != '.')
   	{
   		i++;
-  		sprintf(path,"%s%s", directory,dp->d_name);
+  		if(p!='/') sprintf(path,"%s/%s", directory,dp->d_name);else sprintf(path,"%s%s", directory,dp->d_name);
   		if(verbose==1) printf("deleted: %s\n",path);
   		if(i%1000 ==0) printf("\n\tdeleted: %d files\n\n",i);
   		remove(path);
