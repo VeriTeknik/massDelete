@@ -21,8 +21,12 @@ Please use in caution as the app will delete all files without asking for it.
 #### to delete files in /var/lib/session
 >./massDelete -d /var/lib/session -v
 
-#Changelog
+#### to delete files in /tmp with 2500 microseconds sleep between each deletion
+>./massDelete -d /var/lib/session -v -s 2500
 
+#Changelog
+Version 0.3
+	Added sleep between each delete cycle to drop disk utulization
 Version 0.2
 	Added Ctrl + C handler, now you can see the number of deleted files on hitting CTRL + C
 	
