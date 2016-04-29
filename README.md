@@ -1,5 +1,7 @@
 # massDelete
 
+## note: the app is not ready yet
+
 This application will delete all files inside a directory given from command line as an argument,
 
 The files are not sorted and deleted as the app seek the file.
