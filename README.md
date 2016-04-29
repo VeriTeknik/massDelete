@@ -14,6 +14,7 @@ Please use in caution as the app will delete all files without asking for it.
 
 #### compile
 >make
+
 #### to delete files in /var/lib/session
 >./massDelete -d /var/lib/session -v
 
