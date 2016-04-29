@@ -12,7 +12,10 @@ Please use in caution as the app will delete all files without asking for it.
 #### Download the code:
 >git clone https://github.com/VeriTeknik/massDelete.git
 
-#### compile
+#### Cd to dir:
+>cd massDelete/
+
+#### Compile the code
 >make
 
 #### to delete files in /var/lib/session
