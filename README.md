@@ -3,9 +3,12 @@
 
 This application will delete all files inside a directory given from command line as an argument,
 
-The files are not sorted and deleted as the app seek the file.
+The files are not sorted and deleted as the app seek the file. 
 
 Please use in caution as the app will delete all files without asking for it.
+
+This app is especially useful when you want to delete millions of files inside a directory and you get the error from rm: "argument list too long"
+If you suffer from disk empty but you don't have any inodes to use the space, mostly 0 sized millions of files causes this error. Application tested to be faster than rm, rsync and perl alternatives.
 
 # Usage
 
