@@ -29,7 +29,7 @@ If you suffer from disk empty but you don't have any inodes to use the space, mo
 
 #Changelog
 Version 0.3
-	Added sleep between each delete cycle to drop disk utulization
+	Added sleep between each delete cycle to drop disk utilization
 Version 0.2
 	Added Ctrl + C handler, now you can see the number of deleted files on hitting CTRL + C
 	
