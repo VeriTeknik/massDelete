@@ -30,6 +30,7 @@ If you suffer from disk empty but you don't have any inodes to use the space, mo
 #Changelog
 Version 0.4
 	Added Average deletes per second
+	
 Version 0.3
 	Added sleep between each delete cycle to drop disk utilization
 	
