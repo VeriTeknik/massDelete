@@ -28,8 +28,11 @@ If you suffer from disk empty but you don't have any inodes to use the space, mo
 >./massDelete -d /tmp -v -s 2500
 
 #Changelog
+Version 0.4
+	Added Average deletes per second
 Version 0.3
 	Added sleep between each delete cycle to drop disk utilization
+	
 Version 0.2
 	Added Ctrl + C handler, now you can see the number of deleted files on hitting CTRL + C
 	

@@ -6,7 +6,7 @@
 @Author: Cem Karaca
 Copyright 2016
 
-Version 0.3
+Version 0.4
 
 USE AT YOUR OWN RISK
 
@@ -20,13 +20,19 @@ USE AT YOUR OWN RISK
 #include <dirent.h>
 #include <signal.h>
 #include <unistd.h>
+#include <malloc.h>
+#include <sys/time.h>
 
+/* GLOBAL DECLERATIONS */
 int i=0;
+double cpu_time_used = 0;
+
 
 void CTRLC(int deleted) {
-    printf("\n\tdeleted: %d files\n\n",i);
+    printf("\n\tdeleted: %d files in %d seconds\n\n",i,(int)cpu_time_used);
     exit(1);
 }
+
 
 
 int main (int argc, char **argv)
@@ -86,20 +92,33 @@ int main (int argc, char **argv)
   }
   
 	char *path = (char*)malloc(255*sizeof(char));
+	struct timeval start, end;
+
+	int averagedeletespersec = 0;
+	
+	gettimeofday(&start, NULL);
+	
   while ((dp = readdir (dir)) != NULL) 
   {
   	if(dp->d_name[0] != '.')
   	{
   		i++;
   		if(p!='/') sprintf(path,"%s/%s", directory,dp->d_name);else sprintf(path,"%s%s", directory,dp->d_name);
-  		if(verbose==1) printf("deleted: %s\n",path);
-  		if(i%1000 ==0) printf("\n\tdeleted: %d files\n\n",i);
+  		if(verbose==1) { fprintf(stderr,"deleted: %s",path);  }
+  		if(i%1000 ==0) 
+			{ 
+				 gettimeofday(&end, NULL);
+
+				cpu_time_used = ((double) (end.tv_sec - start.tv_sec));
+				averagedeletespersec = i/cpu_time_used;
+				fprintf(stderr, "\r deleted: %d files | Average: %d/sec",i,averagedeletespersec);
+			}
   		remove(path);
   		if(sleep==1)usleep(sleepduration);
   	}
   	
 	
 	}
-	printf("\n\tDeleted a total of %d files\n\n",i);
+	printf("\n\tDeleted a total of %d files in %d seconds\n\n",i,(int)cpu_time_used);
 	return 0;
 }
