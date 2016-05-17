@@ -22,6 +22,8 @@ USE AT YOUR OWN RISK
 #include <unistd.h>
 #include <malloc.h>
 #include <sys/time.h>
+#include <errno.h> 
+
 
 /* GLOBAL DECLERATIONS */
 int i=0;
@@ -95,6 +97,7 @@ int main (int argc, char **argv)
 	struct timeval start, end;
 
 	int averagedeletespersec = 0;
+	int rmerr = 0;
 	
 	gettimeofday(&start, NULL);
 	
@@ -113,7 +116,31 @@ int main (int argc, char **argv)
 				averagedeletespersec = i/cpu_time_used;
 				fprintf(stderr, "\r deleted: %d files | Average: %d/sec",i,averagedeletespersec);
 			}
-  		remove(path);
+  		rmerr = remove(path);
+  		if(rmerr!=0)
+  		{
+  			switch(rmerr)
+  			{
+  				case EACCES:
+  					fprintf(stderr,"\ncannot delete %s, ACCESS DENIED",path);
+  					break;
+  				case EBUSY:
+  					fprintf(stderr,"\ncannot delete %s, FILE IN USE",path);
+  					break;
+  				case ENOENT:
+  					fprintf(stderr,"\ncannot delete %s, FILE DOESNT EXISTS",path);
+  					break;
+  				case EPERM:
+  					fprintf(stderr,"\ncannot delete %s, ACCESS DENIED",path);
+  					break;
+  				case EROFS:
+  					fprintf(stderr,"\ncannot delete %s, DIR READ ONLY",path);
+  					break;
+  				case ENAMETOOLONG:
+  					fprintf(stderr,"\ncannot delete %s, NAME TOO LONG",path);
+  					break;
+  			}
+  		}
   		if(sleep==1)usleep(sleepduration);
   	}
   	
