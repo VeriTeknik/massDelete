@@ -118,22 +118,22 @@ int main (int argc, char **argv)
   			switch(rmerr)
   			{
   				case EACCES:
-  					fprintf(stderr,"\ncannot delete %s, ACCESS DENIED",path);
+  					fprintf(stderr,"\ncannot delete %s, ACCESS DENIED\n",path);
   					break;
   				case EBUSY:
-  					fprintf(stderr,"\ncannot delete %s, FILE IN USE",path);
+  					fprintf(stderr,"\ncannot delete %s, FILE IN USE\n",path);
   					break;
   				case ENOENT:
-  					fprintf(stderr,"\ncannot delete %s, FILE DOESNT EXISTS",path);
+  					fprintf(stderr,"\ncannot delete %s, FILE DOESNT EXISTS\n",path);
   					break;
   				case EPERM:
-  					fprintf(stderr,"\ncannot delete %s, ACCESS DENIED",path);
+  					fprintf(stderr,"\ncannot delete %s, ACCESS DENIED\n",path);
   					break;
   				case EROFS:
-  					fprintf(stderr,"\ncannot delete %s, DIR READ ONLY",path);
+  					fprintf(stderr,"\ncannot delete %s, DIR READ ONLY\n",path);
   					break;
   				case ENAMETOOLONG:
-  					fprintf(stderr,"\ncannot delete %s, NAME TOO LONG",path);
+  					fprintf(stderr,"\ncannot delete %s, NAME TOO LONG\n",path);
   					break;
   			}
   		}
