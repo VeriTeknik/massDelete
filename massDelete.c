@@ -25,7 +25,7 @@ USE AT YOUR OWN RISK
 #include <errno.h> 
 
 
-/* GLOBAL DECLERATIONS */
+/* GLOBAL DECLARATIONS */
 int i=0;
 double cpu_time_used = 0;
 
