@@ -3,10 +3,10 @@
 - NO argument list too long
 - NO waiting
 
-@Author: Cem Karaca
-Copyright 2016
+@Authors: Cem Karaca, M. Emre Aydin
+Copyright 2018
 
-Version 0.4
+Version 0.5
 
 USE AT YOUR OWN RISK
 
@@ -41,20 +41,22 @@ int main (int argc, char **argv)
 {
 	signal(SIGINT, CTRLC);
 
-	int verbose=0;
+	int verbose = 0;
 	int options;
 	char *directory = NULL;
 	int dflag = 0;
 	int sleep = 0;
+	int preserve = 0;
 	unsigned int sleepduration = 10;
 	DIR *dir;
 	struct dirent *dp;
 	static char usage[] = "usage: ./massDelete -d <DIRECTORY> -v -s 2000 \n\t"
-					    "-d <path to folder> to delete files inside with trailing slash.\n\t"
+					    "-d <path to folder> to delete files inside with trailing slash. Also removes directory afterwards.\n\t"
+                        "-p [OPTINAL] preserve directory after deleting everything inside.\n\t"
 		                "-v [OPTIONAL] verbose.\n\t"
                         "-s [OPTIONAL] sleep between each delete in microseconds\n\n"
 				        "Example: ./massDelete -d /var/lib/session -v -s 2000\n";
-	while ((options = getopt(argc, argv, "d:v::s:")) != -1)
+	while ((options = getopt(argc, argv, "d:v::s:p")) != -1)
 	switch(options)
 	{
 		case 'd':
@@ -68,6 +70,9 @@ int main (int argc, char **argv)
 			sleep = 1;
 			sleepduration =  atoi(optarg);
 			break;
+	    case 'p':
+	        preserve = 1;
+	        break;
 		case '?':
 	      return 1;
     default:
@@ -98,7 +103,8 @@ int main (int argc, char **argv)
 
 	int averagedeletespersec = 0;
 	int rmerr = 0;
-	
+	int rmdir_err = 0;
+
 	gettimeofday(&start, NULL);
 	
   while ((dp = readdir (dir)) != NULL) 
@@ -146,6 +152,16 @@ int main (int argc, char **argv)
   	
 	
 	}
+
+	if (preserve != 1) {
+        rmdir_err = rmdir(directory);
+        if (rmdir_err != 0) {
+            printf("Unable to remove directory %s\n", directory);
+        } else {
+            printf("Removed directory %s\n", directory);
+        }
+    }
+
 	printf("\n\tDeleted a total of %d files in %d seconds\n\n",i,(int)cpu_time_used);
 	return 0;
 }
