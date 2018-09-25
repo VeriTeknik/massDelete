@@ -49,7 +49,10 @@ int main (int argc, char **argv)
 	unsigned int sleepduration = 10;
 	DIR *dir;
 	struct dirent *dp;
-	static char usage[] = "usage: ./massDelete -d <DIRECTORY> -v -s 2000 \n\t-d <path to folder to delete files inside with trailing slash.\n\t-v verbose.\n\t-s sleep between each delete in microseconds\n\nExample: ./massDelete -d /var/lib/session -v -s 2000\n";
+	static char usage[] = "usage: ./massDelete -d <DIRECTORY> -v -s 2000 \n\t"
+					   "-d <path to folder to delete files inside with trailing slash.\n\t"
+		               "-v verbose.\n\t-s sleep between each delete in microseconds\n\n"
+				       "Example: ./massDelete -d /var/lib/session -v -s 2000\n";
 	while ((options = getopt(argc, argv, "d:v::s:")) != -1)
 	switch(options)
 	{
