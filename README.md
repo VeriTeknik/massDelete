@@ -42,12 +42,14 @@ By default, the program removes the empty directory afterwards. To preserve the 
 
 ```./massDelete -d /tmp -p```
 
+## Recursive Deleting
+
 The program does **NOT** delete folders recursively. You can use ```find``` to achieve it. Let's say you want to delete every file in ```/opt/some_dir/a``` and ```/opt/some_dir/b```: 
 
 ```find /opt/some_dir -mindepth 1 -maxdepth 1 -type d -exec massDelete -d {} -v \;```
 
 
-#Changelog
+# Changelog
 
 Version 0.5
     Now removes the empty directory afterwards. If the users wants to keep the empty directory, has to explicitly provide the -p option.
