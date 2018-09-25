@@ -65,13 +65,9 @@ int main (int argc, char **argv)
 			sleepduration =  atoi(optarg);
 			break;
 		case '?':
-//			if (optopt == 'd')
-//         fprintf (stderr, "Option -%c requires an argument.\n", optopt);
-      return 1;
+	      return 1;
     default:
- //   	printf('%s',usage);
     	abort();
-			
 	}
 	
 	if (dflag == 0) 
