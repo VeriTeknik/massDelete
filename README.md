@@ -12,22 +12,46 @@ If you suffer from disk empty but you don't have any inodes to use the space, mo
 
 # Usage
 
-#### Download the code:
->git clone https://github.com/VeriTeknik/massDelete.git
+Download the code:
 
-#### Cd to dir:
->cd massDelete/
+```git clone https://github.com/VeriTeknik/massDelete.git```
 
-#### Compile the code
->make
+cd to dir:
 
-#### to delete files in /var/lib/session
->./massDelete -d /var/lib/session -v
+```cd massDelete```
 
-#### to delete files in /tmp with 2500 microseconds sleep between each deletion
->./massDelete -d /tmp -v -s 2500
+compile the code:
+
+```make```
+
+or one can simply use gcc:
+
+```gcc massDelete.c -o massDelete```
+
+to delete files in ```/var/lib/session```:
+
+```./massDelete -d /var/lib/session -v```
+
+The ```-v``` means verbose mode, it is optional.
+
+to delete files in ```/tmp``` with 2500 microseconds sleep between each deletion:
+
+```./massDelete -d /tmp -v -s 2500```
+
+By default, the program removes the empty directory afterwards. To preserve the directory, use the ```-p``` option:
+
+```./massDelete -d /tmp -p```
+
+The program does **NOT** delete folders recursively. You can use ```find``` to achieve it. Let's say you want to delete every file in ```/opt/some_dir/a``` and ```/opt/some_dir/b```: 
+
+```find /opt/some_dir -mindepth 1 -maxdepth 1 -type d -exec massDelete -d {} -v \;```
+
 
 #Changelog
+
+Version 0.5
+    Now removes the empty directory afterwards. If the users wants to keep the empty directory, has to explicitly provide the -p option.
+
 Version 0.4
 	Added Average deletes per second
 	
