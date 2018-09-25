@@ -157,9 +157,9 @@ int main (int argc, char **argv)
 	if (preserve != 1) {
         rmdir_err = rmdir(directory);
         if (rmdir_err != 0) {
-            printf("Unable to remove directory %s\n", directory);
+            printf("\nUnable to remove directory %s\n", directory);
         } else {
-            printf("Removed directory %s\n", directory);
+            printf("\nRemoved directory %s\n", directory);
         }
     }
 
