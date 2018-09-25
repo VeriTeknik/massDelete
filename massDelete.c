@@ -55,7 +55,8 @@ int main (int argc, char **argv)
                         "-p [OPTINAL] preserve directory after deleting everything inside.\n\t"
 		                "-v [OPTIONAL] verbose.\n\t"
                         "-s [OPTIONAL] sleep between each delete in microseconds\n\n"
-				        "Example: ./massDelete -d /var/lib/session -v -s 2000\n";
+				        "Example: ./massDelete -d /var/lib/session -v -s 2000\n"
+	                    "For further details and updates, check https://github.com/Veriteknik/massDelete\n";
 	while ((options = getopt(argc, argv, "d:v::s:p")) != -1)
 	switch(options)
 	{
