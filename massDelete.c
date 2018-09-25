@@ -103,7 +103,7 @@ int main (int argc, char **argv)
   	{
   		i++;
   		if(p!='/') sprintf(path,"%s/%s", directory,dp->d_name);else sprintf(path,"%s%s", directory,dp->d_name);
-  		if(verbose==1) { fprintf(stderr,"deleted: %s",path);  }
+  		if(verbose==1) { fprintf(stderr,"deleted: %s\n",path);  }
   		if(i%1000 ==0) 
 			{ 
 				 gettimeofday(&end, NULL);
