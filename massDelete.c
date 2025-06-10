@@ -20,19 +20,85 @@ USE AT YOUR OWN RISK
 #include <dirent.h>
 #include <signal.h>
 #include <unistd.h>
+#ifdef __linux__
 #include <malloc.h>
+#endif
 #include <sys/time.h>
+#include <sys/stat.h>
 #include <errno.h> 
 
 
 /* GLOBAL DECLARATIONS */
 int i=0;
 double cpu_time_used = 0;
+int verbose_global = 0;
+int sleep_global = 0;
+unsigned int sleepduration_global = 10;
 
 
 void CTRLC(int deleted) {
     printf("\n\tdeleted: %d files in %d seconds\n\n",i,(int)cpu_time_used);
     exit(1);
+}
+
+int recursive_delete(const char *path) {
+    DIR *dir;
+    struct dirent *dp;
+    struct stat statbuf;
+    char full_path[1024];
+    int result = 0;
+    
+    if (stat(path, &statbuf) != 0) {
+        return -1;
+    }
+    
+    if (S_ISDIR(statbuf.st_mode)) {
+        // It's a directory, open it and process contents
+        dir = opendir(path);
+        if (dir == NULL) {
+            return -1;
+        }
+        
+        while ((dp = readdir(dir)) != NULL) {
+            if (strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0) {
+                continue;
+            }
+            
+            snprintf(full_path, sizeof(full_path), "%s/%s", path, dp->d_name);
+            
+            // Recursively delete contents
+            if (recursive_delete(full_path) != 0) {
+                result = -1;
+            }
+        }
+        closedir(dir);
+        
+        // Now delete the empty directory
+        if (rmdir(path) == 0) {
+            i++;
+            if (verbose_global) {
+                fprintf(stderr, "deleted directory: %s\n", path);
+            }
+        } else {
+            result = -1;
+        }
+    } else {
+        // It's a file, delete it
+        if (remove(path) == 0) {
+            i++;
+            if (verbose_global) {
+                fprintf(stderr, "deleted file: %s\n", path);
+            }
+        } else {
+            result = -1;
+        }
+        
+        if (sleep_global) {
+            usleep(sleepduration_global);
+        }
+    }
+    
+    return result;
 }
 
 
@@ -47,17 +113,19 @@ int main (int argc, char **argv)
 	int dflag = 0;
 	int sleep = 0;
 	int preserve = 0;
+	int recursive = 1;  // Default to recursive mode now
 	unsigned int sleepduration = 10;
 	DIR *dir;
 	struct dirent *dp;
-	static char usage[] = "usage: ./massDelete -d <DIRECTORY> -v -s 2000 \n\t"
+	static char usage[] = "usage: ./massDelete -d <DIRECTORY> -v -s 2000 -r\n\t"
 					    "-d <path to folder> to delete files inside with trailing slash. Also removes directory afterwards.\n\t"
                         "-p [OPTINAL] preserve directory after deleting everything inside.\n\t"
 		                "-v [OPTIONAL] verbose.\n\t"
-                        "-s [OPTIONAL] sleep between each delete in microseconds\n\n"
+                        "-s [OPTIONAL] sleep between each delete in microseconds\n\t"
+                        "-r [DEFAULT] recursive deletion of directories (now default behavior)\n\n"
 				        "Example: ./massDelete -d /var/lib/session -v -s 2000\n"
 	                    "For further details and updates, check https://github.com/Veriteknik/massDelete\n";
-	while ((options = getopt(argc, argv, "d:v::s:p")) != -1)
+	while ((options = getopt(argc, argv, "d:v::s:pr")) != -1)
 	switch(options)
 	{
 		case 'd':
@@ -73,6 +141,9 @@ int main (int argc, char **argv)
 			break;
 	    case 'p':
 	        preserve = 1;
+	        break;
+	    case 'r':
+	        recursive = 1;
 	        break;
 		case '?':
 	      return 1;
@@ -92,6 +163,11 @@ int main (int argc, char **argv)
 	printf("Directory= \"%s\"\n", directory);
 	verbose==1?printf("Verbosity enabled\n\n"):printf("Verbosity disabled\n\n");
 	if(sleep==1)printf("Sleep duration %u microseconds\n",sleepduration);
+	
+	// Set global variables for the recursive function
+	verbose_global = verbose;
+	sleep_global = sleep;
+	sleepduration_global = sleepduration;
 
 	if ((dir = opendir (directory)) == NULL) 
 	{
@@ -108,51 +184,27 @@ int main (int argc, char **argv)
 
 	gettimeofday(&start, NULL);
 	
-  while ((dp = readdir (dir)) != NULL) 
-  {
-  	if(dp->d_name[0] != '.')
-  	{
-  		i++;
-  		if(p!='/') sprintf(path,"%s/%s", directory,dp->d_name);else sprintf(path,"%s%s", directory,dp->d_name);
-  		if(verbose==1) { fprintf(stderr,"deleted: %s\n",path);  }
-  		if(i%1000 ==0) 
+	// Process directory contents recursively
+	while ((dp = readdir(dir)) != NULL) 
+	{
+		if(dp->d_name[0] != '.')
+		{
+			if(p!='/') sprintf(path,"%s/%s", directory,dp->d_name);else sprintf(path,"%s%s", directory,dp->d_name);
+			
+			// Use recursive deletion
+			recursive_delete(path);
+			
+			if(i%1000 ==0) 
 			{ 
-				 gettimeofday(&end, NULL);
-
+				gettimeofday(&end, NULL);
 				cpu_time_used = ((double) (end.tv_sec - start.tv_sec));
 				averagedeletespersec = i/cpu_time_used;
-				fprintf(stderr, "\r deleted: %d files | Average: %d/sec",i,averagedeletespersec);
+				fprintf(stderr, "\r deleted: %d items | Average: %d/sec",i,averagedeletespersec);
 			}
-  		rmerr = remove(path);
-  		if(rmerr!=0)
-  		{
-  			switch(rmerr)
-  			{
-  				case EACCES:
-  					fprintf(stderr,"\ncannot delete %s, ACCESS DENIED\n",path);
-  					break;
-  				case EBUSY:
-  					fprintf(stderr,"\ncannot delete %s, FILE IN USE\n",path);
-  					break;
-  				case ENOENT:
-  					fprintf(stderr,"\ncannot delete %s, FILE DOESNT EXISTS\n",path);
-  					break;
-  				case EPERM:
-  					fprintf(stderr,"\ncannot delete %s, ACCESS DENIED\n",path);
-  					break;
-  				case EROFS:
-  					fprintf(stderr,"\ncannot delete %s, DIR READ ONLY\n",path);
-  					break;
-  				case ENAMETOOLONG:
-  					fprintf(stderr,"\ncannot delete %s, NAME TOO LONG\n",path);
-  					break;
-  			}
-  		}
-  		if(sleep==1)usleep(sleepduration);
-  	}
-  	
-	
+		}
 	}
+	
+	closedir(dir);
 
 	if (preserve != 1) {
         rmdir_err = rmdir(directory);
@@ -163,6 +215,8 @@ int main (int argc, char **argv)
         }
     }
 
-	printf("\n\tDeleted a total of %d files in %d seconds\n\n",i,(int)cpu_time_used);
+	gettimeofday(&end, NULL);
+	cpu_time_used = ((double) (end.tv_sec - start.tv_sec));
+	printf("\n\tDeleted a total of %d items in %d seconds\n\n",i,(int)cpu_time_used);
 	return 0;
 }
